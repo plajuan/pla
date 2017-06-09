@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project Galanga with libraries in sub-folder">
+	<description>CSPsys Build Script</description>
+		
+	<property name="build.dir" value="D:/MyApps/" />
+	<property name="report.dir" value="C:/GalangaData/activityReport/" />
+	<property name="build.lib" value="${build.dir}/Galanga_lib" />
+	<property name="build.jar" value="${build.dir}/Galanga.jar" />
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	<property name="project.classes" location="build/classes" />
+	<property name="project.lib" location="lib" />
+	
+    <target name="create_run_jar" depends="compile">
+        <jar destfile="${build.jar}">
+            <manifest>
+                <attribute name="Main-Class" value="com.csp.galanga.ManTrip"/>
+                <attribute name="Class-Path" value=". Galanga_lib/ojdbc6.jar Galanga_lib/postgresql-9.2-1002.jdbc4.jar Galanga_lib/commons-codec-1.5.jar Galanga_lib/commons-logging-1.1.jar Galanga_lib/dom4j-1.6.1.jar Galanga_lib/junit-4.11.jar Galanga_lib/log4j-1.2.13.jar Galanga_lib/poi-3.10.1-20140818.jar Galanga_lib/poi-ooxml-3.10.1-20140818.jar Galanga_lib/poi-ooxml-schemas-3.10.1-20140818.jar Galanga_lib/stax-api-1.0.1.jar Galanga_lib/xmlbeans-2.6.0.jar"/>
+            </manifest>
+            <fileset dir="${project.classes}"/>
+        </jar>
+        <delete dir="${build.lib}"/>
+        <mkdir dir="${build.lib}"/>
+    	
+    	<copy todir="${build.lib}" verbose="true">
+    		<fileset dir="${project.lib}" />
+    	</copy>
+    </target>
+	
+	<target name="compile">
+		<echo>${ant.version}</echo>
+		<delete dir="${project.classes}" />
+		<mkdir dir="${project.classes}"/>
+				
+		<javac srcdir="src" destdir="${project.classes}" includeantruntime="false" source="${source}" target="${target}">
+			<classpath>
+				<pathelement path="${classpath}" />
+				<fileset dir="${project.lib}">
+					<include name="**/*.jar"/>
+				</fileset>					
+			</classpath>
+		</javac>
+		
+		<copy todir="${project.classes}" verbose="true">
+    		<fileset dir="src">
+    			<include name="*.properties"/>
+    		</fileset>
+    	</copy>
+		
+		<copy todir="${report.dir}" verbose="true" failonerror="true" overwrite="true">
+			<fileset file="doc/report.jsp"></fileset>
+			<fileset file="doc/packed.js"></fileset>
+			<fileset file="doc/script.js"></fileset>
+			<fileset file="doc/style.css"></fileset>
+		</copy>
+		<copy todir="${report.dir}/images" verbose="true" failonerror="true" overwrite="true">
+			<fileset dir="doc/images"></fileset>
+		</copy>
+	</target>
+</project>
